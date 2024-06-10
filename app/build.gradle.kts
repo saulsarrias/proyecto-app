@@ -59,6 +59,8 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
+    implementation ("androidx.compose.material3:material3:1.2.1")
+    implementation ("androidx.compose.material3:material3-window-size-class:1.2.1")
     //implementation("androidx.compose.material3:material3-android:1.2.0")
     implementation ("com.squareup.okhttp3:okhttp:4.9.3") // OkHttp library
     implementation ("com.squareup.retrofit2:retrofit:2.9.0") // Retrofit library

@@ -23,7 +23,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitClient {
-    private const val BASE_URL = "https://proyecto-back-tigw4.ondigitalocean.app/api/"
+    private const val BASE_URL = "http://10.0.2.2:8000/api/"
 
     val retrofit: Retrofit by lazy {
         Retrofit.Builder()
@@ -48,6 +48,7 @@ suspend fun login(email: String, password: String, context: Context, viewModel: 
             call: Call<LoginResponse>,
             response: Response<LoginResponse>
         ) {
+            Log.d("TAG", ""+response.code().toString())
             if (response.isSuccessful) {
                 val token = response.body()!!.token
                 SharesPreferencesApplication.preferences.saveData("token", "Bearer "+token)
