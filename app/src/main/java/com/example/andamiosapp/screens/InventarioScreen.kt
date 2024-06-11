@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -57,22 +58,26 @@ fun ViewContent(
     context: Context
 ){
     val materiales = viewModel.isInventarioList.value.inventarioList
-    var filteredMateriales by remember { mutableStateOf(materiales) }
 
-    fun filterMateriales(searchText: String) {
-        filteredMateriales = if (searchText.isEmpty()) {
-            materiales
-        } else {
-            materiales.filter { material ->
-                material.nombre.contains(searchText, ignoreCase = true) ||
-                        material.descripcion.contains(searchText, ignoreCase = true)
+    var searchText by remember { mutableStateOf("") }
+
+    val filteredMateriales by remember(searchText, materiales) {
+        derivedStateOf {
+            if (searchText.isEmpty()) {
+                materiales
+            } else {
+                materiales.filter { material ->
+                    material.nombre.contains(searchText, ignoreCase = true) ||
+                            material.descripcion.contains(searchText, ignoreCase = true)
+                }
             }
         }
     }
 
+
     Column {
-        MainTopBar(titulo = "", onSearchTextChanged = { searchText ->
-            filterMateriales(searchText)
+        MainTopBar(titulo = "", onSearchTextChanged = { newText ->
+            searchText = newText
         })
 
         LazyColumn(modifier = Modifier.padding(pad)) {

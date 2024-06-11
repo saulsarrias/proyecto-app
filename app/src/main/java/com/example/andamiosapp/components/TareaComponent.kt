@@ -144,7 +144,7 @@ fun CardTarea(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "Precio: ${tarea.precio_por_hora}",
+                    text = "Precio: ${tarea.precio_por_hora}€",
                     style = TextStyle(
                         fontSize = 16.sp,
                         color = MaterialTheme.colorScheme.primary

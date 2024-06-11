@@ -86,6 +86,14 @@ fun NewMaterialScreen(
             ) {
                 Text(text = "Guardar")
             }
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Button(
+                onClick = { navController.popBackStack() },
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            ) {
+                Text(text = "Volver")
+            }
         }
     }
 }

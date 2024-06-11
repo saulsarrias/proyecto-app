@@ -39,6 +39,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.andamiosapp.R
+import com.example.andamiosapp.SharedPreferences.SharesPreferencesApplication
 import com.example.andamiosapp.models.ParteTrabajoRequest
 import com.example.andamiosapp.navigation.AppScreens
 import com.example.andamiosapp.viewmodels.ManagerViewModel
@@ -46,6 +47,7 @@ import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Date
+import java.util.Locale
 
 @SuppressLint("UnrememberedMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -58,27 +60,12 @@ fun NewParteScreen(
     var id_user by remember { mutableStateOf(0) }
     var id_obra by remember { mutableStateOf(0) }
     var fecha_parte by remember { mutableStateOf("") }
-
-    val inputFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
-    val outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-
-    // Estado para mostrar el DatePickerDialog
+    id_user = SharesPreferencesApplication.preferences.getData("idEmpleado", "0").toIntOrNull()!!
     var showDatePicker by remember { mutableStateOf(false) }
-
-    // Estado para la fecha seleccionada
-    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
-
-    // Función para manejar la selección de la fecha
-    fun onDateSelected(year: Int, month: Int, dayOfMonth: Int) {
-        val date = LocalDate.of(year, month + 1, dayOfMonth)
-        fecha_parte = date.format(outputFormatter)
-        selectedDate = date
-        showDatePicker = false
-    }
 
     if (showDatePicker) {
         val datePickerState = rememberDatePickerState()
-        val comfirmEnabled = derivedStateOf { datePickerState.selectedDateMillis != null }
+        val confirmEnabled = derivedStateOf { datePickerState.selectedDateMillis != null }
         DatePickerDialog(
             onDismissRequest = { showDatePicker = false },
             confirmButton = {
@@ -86,16 +73,15 @@ fun NewParteScreen(
                     onClick = {
                         showDatePicker = false
                         var fecha = "No hay fecha seleccionada"
-                            if(datePickerState.selectedDateMillis != null){
-                                fecha = convertLongToTime(datePickerState.selectedDateMillis!!)
-                            }
+                        if(datePickerState.selectedDateMillis != null){
+                            fecha = convertLongToTime(datePickerState.selectedDateMillis!!)
+                        }
                         fecha_parte = fecha
                     },
-                    enabled = comfirmEnabled.value
+                    enabled = confirmEnabled.value
                 ) {
                     Text("OK")
                 }
-
             },
             dismissButton = {
                 TextButton(onClick = { showDatePicker = false }) {
@@ -132,7 +118,7 @@ fun NewParteScreen(
             )
 
             OutlinedTextField(
-                value = fecha_parte.format(inputFormatter),
+                value = fecha_parte,
                 onValueChange = {},
                 label = { Text("Fecha del Parte (dd-MM-aaaa)") },
                 keyboardOptions = KeyboardOptions.Default.copy(
@@ -155,8 +141,10 @@ fun NewParteScreen(
 
             Button(
                 onClick = {
-                    viewModel.guardarParte(context, viewModel, ParteTrabajoRequest(id_user, id_obra, fecha_parte))
-                    navController.navigate(AppScreens.InventarioScreen.route)
+                    val formattedDate = formatDateToServerFormat(fecha_parte)
+                    viewModel.guardarParte(context,  ParteTrabajoRequest(id_user, id_obra, formattedDate))
+                    Log.d("TAG", "fecha $formattedDate")
+                    navController.navigate(AppScreens.ParteTrabajoScreen.route)
                 },
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             ) {
@@ -177,6 +165,13 @@ fun NewParteScreen(
 
 fun convertLongToTime(time: Long): String {
     val date = Date(time)
-    val format = SimpleDateFormat("dd/MM/yyyy")
+    val format = SimpleDateFormat("dd-MM-yyyy")
     return format.format(date)
+}
+
+fun formatDateToServerFormat(date: String): String {
+    val inputFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+    val outputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+    val parsedDate = inputFormat.parse(date)
+    return outputFormat.format(parsedDate!!)
 }

@@ -75,8 +75,10 @@ suspend fun getInventario(context: Context, viewModel: ManagerViewModel) = withC
         ) {
             Log.d("TAG", "onResponse: ")
             if (response.isSuccessful) {
-                viewModel.setStateInventarioList(true)
-                viewModel.isInventarioList.value.inventarioList = response.body()!!
+                response.body()?.let { materiales ->
+                    Log.d("TAG", "Partes obtenidas: $materiales")
+                    viewModel.updateInventarioList(materiales)
+                }
 
             } else {
                 Toast.makeText(context,"Error al obtener materiales", Toast.LENGTH_SHORT).show()
@@ -89,29 +91,32 @@ suspend fun getInventario(context: Context, viewModel: ManagerViewModel) = withC
     })
 }
 
-suspend fun getPartesUsuario(context: Context, viewModel: ManagerViewModel) = withContext(Dispatchers.IO){
-    val id = SharesPreferencesApplication.preferences.getData("idEmpleado", "2")
+ suspend fun getPartesUsuario(context: Context, viewModel: ManagerViewModel) = withContext(Dispatchers.IO) {
+    val id = SharesPreferencesApplication.preferences.getData("idEmpleado", "")
     val token = SharesPreferencesApplication.preferences.getData("token", "")
     val call: Call<List<ParteTrabajoResponse>> = ApiClient.apiService.getPartes(token, id)
-    call.enqueue(object: Callback<List<ParteTrabajoResponse>>{
+    call.enqueue(object : Callback<List<ParteTrabajoResponse>> {
         override fun onResponse(
             call: Call<List<ParteTrabajoResponse>>,
             response: Response<List<ParteTrabajoResponse>>
         ) {
             if (response.isSuccessful) {
-                viewModel.setStateParteTrabajoList(true)
-                viewModel.isParteTrabajoList.value.parteTrabajoList = response.body()!!
+                response.body()?.let { partes ->
+                    Log.d("TAG", "Partes obtenidas: $partes")
+                    viewModel.updateParteTrabajoList(partes)
+                }
             } else {
                 Log.e("TAG", "onResponse: " + response.errorBody())
-                Toast.makeText(context,"Error al obtener materiales", Toast.LENGTH_SHORT).show()
-
+                Toast.makeText(context, "Error al obtener partes de trabajo", Toast.LENGTH_SHORT).show()
             }
         }
+
         override fun onFailure(call: Call<List<ParteTrabajoResponse>>, t: Throwable) {
-            Log.d("TAG", "onFailure: "+ t)
+            Log.d("TAG", "onFailure: " + t)
         }
     })
 }
+
 
 suspend fun getTareasParte(context: Context, viewModel: ManagerViewModel) = withContext(Dispatchers.IO){
 
@@ -124,8 +129,10 @@ suspend fun getTareasParte(context: Context, viewModel: ManagerViewModel) = with
             response: Response<List<TareaResponse>>
         ) {
             if (response.isSuccessful) {
-                viewModel.setStateTareaList(true)
-                viewModel.isTareaList.value.tareaList = response.body()!!
+                response.body()?.let { tareas ->
+                    Log.d("TAG", "Partes obtenidas: $tareas")
+                    viewModel.updateTareaList(tareas)
+                }
             } else {
                 Log.e("TAG", "onResponse: " + response.errorBody())
                 Toast.makeText(context,"Error al obtener tareas", Toast.LENGTH_SHORT).show()
@@ -159,28 +166,27 @@ suspend fun getTareasParte(context: Context, viewModel: ManagerViewModel) = with
         }
     })
 }
-
-fun saveParte(context: Context, viewModel: ManagerViewModel, parteTrabajoRequest: ParteTrabajoRequest){
+suspend fun saveParte(context: Context, viewModel: ManagerViewModel, parteTrabajoRequest: ParteTrabajoRequest) = withContext(Dispatchers.IO) {
     val token = SharesPreferencesApplication.preferences.getData("token", "")
     val call: Call<ParteTrabajoResponse> = ApiClient.apiService.saveParte(token, parteTrabajoRequest)
-    call.enqueue(object: Callback<ParteTrabajoResponse>{
-        override fun onResponse(
-            call: Call<ParteTrabajoResponse>,
-            response: Response<ParteTrabajoResponse>
-        ) {
+    call.enqueue(object : Callback<ParteTrabajoResponse> {
+        override fun onResponse(call: Call<ParteTrabajoResponse>, response: Response<ParteTrabajoResponse>) {
             if (response.isSuccessful) {
-                viewModel.setStateParteTrabajoList(true)
-                Toast.makeText(context, "Parte guardado con exito", Toast.LENGTH_SHORT).show()
+                response.body()?.let { nuevoParte ->
+                    Toast.makeText(context, "Parte guardado con éxito", Toast.LENGTH_SHORT).show()
+                    viewModel.addParteToList(nuevoParte) // Añade el nuevo parte a la lista
+                }
             } else {
                 Toast.makeText(context, "Error al guardar parte", Toast.LENGTH_SHORT).show()
+                Log.d("TAG", "onResponse: " + response)
             }
         }
+
         override fun onFailure(call: Call<ParteTrabajoResponse>, t: Throwable) {
-            Log.d("TAG", "onFailure: "+ t)
+            Log.d("TAG", "onFailure: " + t)
         }
     })
 }
-
 fun saveMaterial(context: Context, viewModel: ManagerViewModel, inventario: InventarioRequest){
     val token = SharesPreferencesApplication.preferences.getData("token", "")
     val call: Call<InventarioResponse> = ApiClient.apiService.saveMaterial(token, inventario)
@@ -190,8 +196,11 @@ fun saveMaterial(context: Context, viewModel: ManagerViewModel, inventario: Inve
             response: Response<InventarioResponse>
         ) {
             if (response.isSuccessful) {
+                response.body()?.let { nuevoMaterial ->
+                    Toast.makeText(context, "Parte guardado con éxito", Toast.LENGTH_SHORT).show()
+                    viewModel.addMaterialToList(nuevoMaterial) // Añade el nuevo parte a la lista
+                }
                 Toast.makeText(context, "Material guardado con exito", Toast.LENGTH_SHORT).show()
-                viewModel.setStateInventarioList(true)
 
             } else {
                 Toast.makeText(context, "Error al guardar material", Toast.LENGTH_SHORT).show()
@@ -212,7 +221,10 @@ fun saveTarea(context: Context, viewModel: ManagerViewModel, tareaRequest: Tarea
             response: Response<TareaResponse>
         ) {
             if (response.isSuccessful) {
-                viewModel.setStateTareaList(true)
+                response.body()?.let { nuevaTarea ->
+                    Toast.makeText(context, "Parte guardado con éxito", Toast.LENGTH_SHORT).show()
+                    viewModel.addTareaToList(nuevaTarea) // Añade el nuevo parte a la lista
+                }
                 Toast.makeText(context, "Tarea guardada con exito", Toast.LENGTH_SHORT).show()
             } else {
                 Toast.makeText(context, "Error al guardar tarea", Toast.LENGTH_SHORT).show()
@@ -233,8 +245,9 @@ fun deleteMaterial(context: Context, viewModel: ManagerViewModel, id: String){
             response: Response<Void>
         ) {
             if (response.isSuccessful) {
-                viewModel.setStateTareaList(true)
                 Toast.makeText(context, "Material borrado con exito", Toast.LENGTH_SHORT).show()
+                viewModel.removeMaterialFromList(id)
+                viewModel.obtenerMateriales(context, viewModel)
             } else {
                 Log.d("TAG", "onResponse: "+response)
                 Toast.makeText(context, "Error al borrar material", Toast.LENGTH_SHORT).show()
@@ -245,26 +258,28 @@ fun deleteMaterial(context: Context, viewModel: ManagerViewModel, id: String){
         }
     })
 }
-fun deleteParte(context: Context, viewModel: ManagerViewModel, id: String){
+suspend fun deleteParte(context: Context, viewModel: ManagerViewModel, id: String) = withContext(Dispatchers.IO) {
     val token = SharesPreferencesApplication.preferences.getData("token", "")
     val call: Call<Void> = ApiClient.apiService.deleteParte(token, id)
-    call.enqueue(object: Callback<Void>{
-        override fun onResponse(
-            call: Call<Void>,
-            response: Response<Void>
-        ) {
+    call.enqueue(object : Callback<Void> {
+        override fun onResponse(call: Call<Void>, response: Response<Void>) {
             if (response.isSuccessful) {
-                viewModel.setStateTareaList(true)
-                Toast.makeText(context, "Parte borrado con exito", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Parte eliminado con éxito", Toast.LENGTH_SHORT).show()
+                viewModel.removeParteFromList(id)
+                viewModel.obtenerPartesUsuario(context, viewModel) // Actualiza la lista de partes
+
             } else {
-                Toast.makeText(context, "Error al guardar tarea", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Error al eliminar parte", Toast.LENGTH_SHORT).show()
+                Log.d("TAG", "onResponse: " + response)
             }
         }
+
         override fun onFailure(call: Call<Void>, t: Throwable) {
-            Log.d("TAG", "onFailure: "+ t)
+            Log.d("TAG", "onFailure: " + t)
         }
     })
 }
+
 fun deleteTarea(context: Context, viewModel: ManagerViewModel, id: String){
     val token = SharesPreferencesApplication.preferences.getData("token", "")
     val call: Call<Void> = ApiClient.apiService.deleteTarea(token, id)
@@ -274,8 +289,9 @@ fun deleteTarea(context: Context, viewModel: ManagerViewModel, id: String){
             response: Response<Void>
         ) {
             if (response.isSuccessful) {
-                viewModel.setStateTareaList(true)
                 Toast.makeText(context, "Tarea borrada conexito", Toast.LENGTH_SHORT).show()
+                viewModel.removeTareaFromList(id)
+                viewModel.obtenerTareasParte(context, viewModel)
             } else {
                 Toast.makeText(context, "Error al guardar tarea", Toast.LENGTH_SHORT).show()
             }

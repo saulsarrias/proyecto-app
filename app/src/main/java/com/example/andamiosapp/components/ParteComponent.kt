@@ -54,8 +54,6 @@ fun MainTopBarParte(
     onSearchTextChanged: (String) -> Unit
 ){
     var searchText by remember { mutableStateOf("") }
-
-
     TopAppBar(
         title = {
             Text(

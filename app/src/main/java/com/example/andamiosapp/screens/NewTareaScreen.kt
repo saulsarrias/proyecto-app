@@ -98,7 +98,7 @@ fun NewTareaScreen(navController: NavController, viewModel: ManagerViewModel
             Spacer(modifier = Modifier.height(16.dp))
 
             Button(
-                onClick = { viewModel.guardarParte(context = context, viewModel, TareaRequest(parte_trabajo_id, descripcion, personal_asignado, precio_por_hora, horas_trabajadas ))
+                onClick = { viewModel.guardarTarea(context = context, viewModel, TareaRequest(parte_trabajo_id, descripcion, personal_asignado, precio_por_hora, horas_trabajadas ))
                     navController.navigate(AppScreens.InventarioScreen.route) },
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             ) {

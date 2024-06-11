@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -56,23 +57,25 @@ fun ViewContentTareas(
     context: Context
 ){
     val tareas = viewModel.isTareaList.value.tareaList
-    var filteredTareas by remember { mutableStateOf(tareas) }
+    var searchText by remember { mutableStateOf("") }
 
 
-    fun filterTareas(searchText: String) {
-        filteredTareas = if (searchText.isEmpty()) {
-            tareas
-        } else {
-            tareas.filter { tarea ->
-                tarea.personal_asignado.contains(searchText, ignoreCase = true) ||
-                        tarea.descripcion.contains(searchText, ignoreCase = true)
+    val filteredTareas by remember(searchText, tareas) {
+        derivedStateOf {
+            if (searchText.isEmpty()) {
+                tareas
+            } else {
+                tareas.filter { tarea ->
+                    tarea.personal_asignado.contains(searchText, ignoreCase = true) ||
+                            tarea.descripcion.contains(searchText, ignoreCase = true)
+                }
             }
         }
     }
 
     Column {
-        MainTopBarTarea(titulo = "", onSearchTextChanged = { searchText ->
-            filterTareas(searchText)
+        MainTopBarTarea(titulo = "", onSearchTextChanged = { newText ->
+            searchText = newText
         }, navController)
 
         LazyColumn(modifier = Modifier.padding(pad)) {

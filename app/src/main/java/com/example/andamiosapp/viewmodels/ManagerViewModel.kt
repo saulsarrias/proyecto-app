@@ -42,11 +42,9 @@ class ManagerViewModel() : ViewModel() {
         viewModelScope.launch(Dispatchers.IO){
             withContext(Dispatchers.Main){
                 getInventario(context, viewModel)
-
             }
         }
     }
-
 
     fun inicio_sesion(email: String, password: String, context: Context, viewModel: ManagerViewModel){
         viewModelScope.launch  (Dispatchers.IO) {
@@ -58,16 +56,15 @@ class ManagerViewModel() : ViewModel() {
         _isToken.update { it.copy(isToken = state) }
     }
 
-    fun setStateInventarioList(state:Boolean){
-        _isInventarioList.update { it.copy(isInventarioList = state) }
+    fun updateParteTrabajoList(parteTrabajoList: List<ParteTrabajoResponse>) {
+        _isParteTrabajoList.update { it.copy(parteTrabajoList = parteTrabajoList, isParteTrabajoList = true) }
+    }
+    fun updateInventarioList(inventarioList: List<InventarioResponse>) {
+        _isInventarioList.update { it.copy(inventarioList = inventarioList, isInventarioList = true) }
     }
 
-    fun setStateParteTrabajoList(state: Boolean){
-        _isParteTrabajoList.update { it.copy(isParteTrabajoList = state) }
-    }
-
-    fun setStateTareaList(state: Boolean){
-        _isTareaList.update { it.copy(isTareaList = state) }
+    fun updateTareaList(tareaList: List<TareaResponse>) {
+        _isTareaList.update { it.copy(tareaList = tareaList, isTareaList = true) }
     }
 
     fun obtenerTareasParte(context: Context, viewModel: ManagerViewModel){
@@ -78,29 +75,70 @@ class ManagerViewModel() : ViewModel() {
         }
     }
 
-    fun obtenerPartesUsuario(context: Context, viewModel: ManagerViewModel){
-        viewModelScope.launch(Dispatchers.IO) {
-            withContext(Dispatchers.Main){
-                getPartesUsuario(context = context, viewModel)
-            }
+    fun obtenerPartesUsuario(context: Context, viewModel: ManagerViewModel) {
+        viewModelScope.launch {
+            getPartesUsuario(context, viewModel)
+        }
+    }
+    fun addParteToList(parte: ParteTrabajoResponse) {
+        _isParteTrabajoList.update { currentList ->
+            val updatedList = currentList.parteTrabajoList.toMutableList()
+            updatedList.add(parte)
+            currentList.copy(parteTrabajoList = updatedList)
         }
     }
 
-    fun guardarParte(context: Context,viewModel: ManagerViewModel, parte: ParteTrabajoRequest){
-        viewModelScope.launch(Dispatchers.IO) {
-            withContext(Dispatchers.Main){
-                saveParte(context = context, viewModel, parte)
-            }
+    fun removeParteFromList(parteId: String) {
+        _isParteTrabajoList.update { currentList ->
+            val updatedList = currentList.parteTrabajoList.filterNot { it?.id.toString() == parteId }
+            currentList.copy(parteTrabajoList = updatedList)
         }
     }
-    fun guardarMaterial(context: Context,viewModel: ManagerViewModel, material: InventarioRequest){
+
+    fun addMaterialToList(material: InventarioResponse) {
+        _isInventarioList.update { currentList ->
+            val updatedList = currentList.inventarioList.toMutableList()
+            updatedList.add(material)
+            currentList.copy(inventarioList = updatedList)
+        }
+    }
+
+    fun removeMaterialFromList(materialId: String) {
+        _isInventarioList.update { currentList ->
+            val updatedList = currentList.inventarioList.filterNot { it?.id.toString() == materialId }
+            currentList.copy(inventarioList = updatedList)
+        }
+    }
+
+    fun addTareaToList(tarea: TareaResponse) {
+        _isTareaList.update { currentList ->
+            val updatedList = currentList.tareaList.toMutableList()
+            updatedList.add(tarea)
+            currentList.copy(tareaList = updatedList)
+        }
+    }
+
+    fun removeTareaFromList(tareaId: String) {
+        _isTareaList.update { currentList ->
+            val updatedList = currentList.tareaList.filterNot { it?.id.toString() == tareaId }
+            currentList.copy(tareaList = updatedList)
+        }
+    }
+
+
+    fun guardarParte(context: Context, parte: ParteTrabajoRequest) {
+        viewModelScope.launch {
+            saveParte(context, this@ManagerViewModel, parte)
+        }
+    }
+    fun guardarMaterial(context: Context, viewModel: ManagerViewModel, material: InventarioRequest){
         viewModelScope.launch(Dispatchers.IO) {
             withContext(Dispatchers.Main){
                 saveMaterial(context = context, viewModel, material)
             }
         }
     }
-    fun guardarParte(context: Context,viewModel: ManagerViewModel, tarea: TareaRequest){
+    fun guardarTarea(context: Context,viewModel: ManagerViewModel, tarea: TareaRequest){
         viewModelScope.launch(Dispatchers.IO) {
             withContext(Dispatchers.Main){
                 saveTarea(context = context, viewModel, tarea)
@@ -115,11 +153,9 @@ class ManagerViewModel() : ViewModel() {
             }
         }
     }
-    fun borrarParte(context: Context, viewModel: ManagerViewModel, id: String){
-        viewModelScope.launch(Dispatchers.IO) {
-            withContext(Dispatchers.Main){
-                deleteParte(context = context, viewModel, id)
-            }
+    fun borrarParte(context: Context, viewModel: ManagerViewModel, id: String) {
+        viewModelScope.launch {
+            deleteParte(context, viewModel, id)
         }
     }
     fun borrarTarea(context: Context, viewModel: ManagerViewModel, id: String){
@@ -144,7 +180,7 @@ data class InventarioList(
 
 data class ParteTrabajoList(
     val isParteTrabajoList: Boolean = false,
-    var parteTrabajoList: List<ParteTrabajoResponse> = emptyList()
+    var parteTrabajoList: List<ParteTrabajoResponse?> = emptyList()
 )
 
 data class TareaList(

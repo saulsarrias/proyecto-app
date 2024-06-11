@@ -1,6 +1,6 @@
 package com.example.andamiosapp.screens
 
-import android.annotation.SuppressLint
+
 import android.content.Context
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -10,6 +10,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -23,10 +25,18 @@ import com.example.andamiosapp.components.FloatingButton
 import com.example.andamiosapp.components.MainTopBarParte
 import com.example.andamiosapp.navigation.AppScreens
 import com.example.andamiosapp.viewmodels.ManagerViewModel
+import com.example.andamiosapp.viewmodels.ParteTrabajoList
 
 @Composable
-fun ParteTrabajoScreen(navController: NavController, viewModel: ManagerViewModel){
-    Scaffold (
+fun ParteTrabajoScreen(navController: NavController, viewModel: ManagerViewModel) {
+    val context = LocalContext.current
+
+    // Observa los cambios en el StateFlow
+    val parteTrabajoListState by viewModel.isParteTrabajoList.collectAsState()
+
+
+
+    Scaffold(
         bottomBar = {
             BottomBar(navController = navController)
         },
@@ -42,47 +52,50 @@ fun ParteTrabajoScreen(navController: NavController, viewModel: ManagerViewModel
             navController = navController,
             viewModel = viewModel,
             pad = it,
-            context = LocalContext.current
+            context = context,
+            parteTrabajoListState = parteTrabajoListState
         )
     }
 }
 
-@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun ViewContentPartes(
     navController: NavController,
     viewModel: ManagerViewModel,
     pad: PaddingValues,
-    context: Context
-){
-    val partes = viewModel.isParteTrabajoList.value.parteTrabajoList
-    var filteredPartes by remember { mutableStateOf(partes) }
+    context: Context,
+    parteTrabajoListState: ParteTrabajoList
+) {
+    val partes = parteTrabajoListState.parteTrabajoList
+    var searchText by remember { mutableStateOf("") }
 
-
-    fun filterPartes(searchText: String) {
-        filteredPartes = if (searchText.isEmpty()) {
-            partes
-        } else {
-            partes.filter { parte ->
-                parte.fecha_parte.contains(searchText, ignoreCase = true)
+    val filteredPartes by remember(searchText, partes) {
+        derivedStateOf {
+            if (searchText.isEmpty()) {
+                partes
+            } else {
+                partes.filter { parte ->
+                    parte?.fecha_parte?.contains(searchText, ignoreCase = true)!!
+                }
             }
         }
     }
 
     Column {
-        MainTopBarParte(titulo = "", onSearchTextChanged = { searchText ->
-            filterPartes(searchText)
+        MainTopBarParte(titulo = "", onSearchTextChanged = { newText ->
+            searchText = newText
         })
-
-        LazyColumn(modifier = Modifier.padding(pad)) {
-            items(filteredPartes) { parte ->
-                CardParte(
-                    parte = parte,
-                    context = context,
-                    navController = navController,
-                    viewModel = viewModel
-                )
+            LazyColumn(modifier = Modifier.padding(pad)) {
+                items(filteredPartes) { parte ->
+                    if (parte != null) {
+                        CardParte(
+                            parte = parte,
+                            context = context,
+                            navController = navController,
+                            viewModel = viewModel
+                        )
+                    }
+                }
             }
         }
-    }
 }
