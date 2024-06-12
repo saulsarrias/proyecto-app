@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -33,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -93,7 +95,7 @@ fun NewParteScreen(
         }
     }
 
-    Surface(color = Color.White) {
+    Surface() {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -146,7 +148,8 @@ fun NewParteScreen(
                     Log.d("TAG", "fecha $formattedDate")
                     navController.navigate(AppScreens.ParteTrabajoScreen.route)
                 },
-                modifier = Modifier.align(Alignment.CenterHorizontally)
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                colors = ButtonColors(containerColor = colorResource(R.color.floatingButton), contentColor = Color.White, disabledContainerColor = colorResource(R.color.floatingButton), disabledContentColor = Color.White )
             ) {
                 Text(text = "Guardar")
             }
@@ -155,7 +158,9 @@ fun NewParteScreen(
 
             Button(
                 onClick = { navController.popBackStack() },
-                modifier = Modifier.align(Alignment.CenterHorizontally)
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                colors = ButtonColors(containerColor = colorResource(R.color.floatingButton), contentColor = Color.White, disabledContainerColor = colorResource(R.color.floatingButton), disabledContentColor = Color.White)
+
             ) {
                 Text(text = "Volver")
             }

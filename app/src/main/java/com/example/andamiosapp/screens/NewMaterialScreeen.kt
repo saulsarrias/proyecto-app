@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -21,9 +22,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.andamiosapp.R
 import com.example.andamiosapp.models.InventarioRequest
 import com.example.andamiosapp.navigation.AppScreens
 import com.example.andamiosapp.viewmodels.ManagerViewModel
@@ -82,7 +85,9 @@ fun NewMaterialScreen(
             Button(
                 onClick = { viewModel.guardarMaterial(context = context, viewModel, InventarioRequest(nombre, descripcion, cantidad))
                     navController.navigate(AppScreens.InventarioScreen.route) },
-                modifier = Modifier.align(Alignment.CenterHorizontally)
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                colors = ButtonColors(containerColor = colorResource(R.color.floatingButton), contentColor = Color.White, disabledContainerColor = colorResource(R.color.floatingButton), disabledContentColor = Color.White)
+
             ) {
                 Text(text = "Guardar")
             }
@@ -90,7 +95,10 @@ fun NewMaterialScreen(
 
             Button(
                 onClick = { navController.popBackStack() },
-                modifier = Modifier.align(Alignment.CenterHorizontally)
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                colors = ButtonColors(containerColor = colorResource(R.color.floatingButton), contentColor = Color.White, disabledContainerColor = colorResource(
+                    R.color.floatingButton), disabledContentColor = Color.White)
+
             ) {
                 Text(text = "Volver")
             }

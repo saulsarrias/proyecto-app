@@ -2,6 +2,7 @@ package com.example.andamiosapp.screens
 
 import android.annotation.SuppressLint
 import android.content.Context
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
@@ -17,7 +18,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.navigation.NavController
+import com.example.andamiosapp.R
 import com.example.andamiosapp.components.BottomBar
 import com.example.andamiosapp.components.CardTarea
 import com.example.andamiosapp.components.FloatingButton
@@ -31,6 +34,9 @@ fun TareaScreen(navController: NavController, viewModel: ManagerViewModel){
         bottomBar = {
             BottomBar(navController = navController)
         },
+
+        modifier = Modifier.background(colorResource(R.color.background)),
+
         floatingActionButtonPosition = FabPosition.End,
         floatingActionButton = {
             FloatingButton(
@@ -76,9 +82,9 @@ fun ViewContentTareas(
     Column {
         MainTopBarTarea(titulo = "", onSearchTextChanged = { newText ->
             searchText = newText
-        }, navController)
+        })
 
-        LazyColumn(modifier = Modifier.padding(pad)) {
+        LazyColumn(modifier = Modifier.padding(pad).background(colorResource(R.color.background))) {
             items(filteredTareas) { tarea ->
                 CardTarea(
                     tarea = tarea,

@@ -31,10 +31,7 @@ import com.example.andamiosapp.viewmodels.ParteTrabajoList
 fun ParteTrabajoScreen(navController: NavController, viewModel: ManagerViewModel) {
     val context = LocalContext.current
 
-    // Observa los cambios en el StateFlow
     val parteTrabajoListState by viewModel.isParteTrabajoList.collectAsState()
-
-
 
     Scaffold(
         bottomBar = {

@@ -3,6 +3,7 @@ package com.example.andamiosapp.components
 import android.content.Context
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -34,11 +35,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.andamiosapp.R
 import com.example.andamiosapp.SharedPreferences.SharesPreferencesApplication
 import com.example.andamiosapp.models.ParteTrabajoResponse
 import com.example.andamiosapp.navigation.AppScreens
@@ -56,36 +59,30 @@ fun MainTopBarParte(
     var searchText by remember { mutableStateOf("") }
     TopAppBar(
         title = {
-            Text(
-                text = titulo,
-                color = Color.White
-            )
+            Box(modifier = Modifier.fillMaxWidth()) {
+                TextField(
+                    value = searchText,
+                    onValueChange = {
+                        searchText = it
+                        onSearchTextChanged(it)
+                    },
+                    placeholder = { Text("Buscar fecha de parte") },
+                    trailingIcon = {
+                        IconButton(
+                            onClick = { searchText = "" }
+                        ) {
+                            Icon(Icons.Filled.Clear, contentDescription = "Borrar")
+                        }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(0.dp)
+                )
+            }
         },
         colors = TopAppBarDefaults.mediumTopAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primary
-        ),
-        actions = {
-            IconButton(
-                onClick = { }
-            ) {
-                Icon(Icons.Filled.Search, contentDescription = "Buscar", tint = Color.White)
-            }
-            TextField(
-                value = searchText,
-                onValueChange = {
-                    searchText = it
-                    onSearchTextChanged(it)
-                },
-                placeholder = { Text("Buscar Parte") },
-                trailingIcon = {
-                    IconButton(
-                        onClick = { searchText = ""}
-                    ) {
-                        Icon(Icons.Filled.Clear, contentDescription = "Limpiar")
-                    }
-                }
-            )
-        }
+            containerColor = colorResource(R.color.topBar)
+        )
     )
 }
 
@@ -113,7 +110,8 @@ fun CardParte(
                 navController.navigate(route = AppScreens.TareaScreen.route)
             },
         shape = RoundedCornerShape(8.dp),
-        elevation = CardDefaults.cardElevation(4.dp)
+        elevation = CardDefaults.cardElevation(4.dp),
+        colors = CardDefaults.cardColors(colorResource(R.color.cardColor)),
     ) {
         Column(
             modifier = Modifier
@@ -135,7 +133,8 @@ fun CardParte(
                     text = "Fecha : ${formattedDate}",
                     style = TextStyle(
                         fontSize = 16.sp,
-                        color = MaterialTheme.colorScheme.primary
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Bold
                     )
                 )
             }

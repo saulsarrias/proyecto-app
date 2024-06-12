@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -28,8 +29,8 @@ import com.example.andamiosapp.navigation.AppScreens
 fun BottomBar(navController: NavController) {
 
     BottomAppBar(
-        contentColor = MaterialTheme.colorScheme.primary,
-        containerColor = MaterialTheme.colorScheme.surface
+        contentColor = Color.White,
+        containerColor = colorResource(R.color.topBar)
 
     ) {
         Row(
@@ -50,7 +51,7 @@ fun BottomBar(navController: NavController) {
                     Icon(painter = painter, contentDescription = "Inventario")
                     
                 },
-                contentColor = if (false) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface // Adjust color based on selection (optional)
+                contentColor = Color.White
             )
             Spacer(modifier = Modifier.weight(1f))
 
@@ -63,7 +64,7 @@ fun BottomBar(navController: NavController) {
                     Text(text = "Partes de Trabajo")
                     Icon(painter = painter, contentDescription = "Partes")
                 },
-                contentColor = if (false) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface // Adjust color based on selection (optional)
+                contentColor = Color.White
             )
             Spacer(modifier = Modifier.weight(1f))
         }
@@ -96,7 +97,7 @@ fun FloatingButton(  onClick: () -> Unit,
     FloatingActionButton(
         onClick = onClick,
         contentColor = Color.White,
-        containerColor = MaterialTheme.colorScheme.primary,
+        containerColor = colorResource(R.color.floatingButton),
         content = {
             Icon(
                 Icons.Filled.Add,

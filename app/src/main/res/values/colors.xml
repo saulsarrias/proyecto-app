@@ -7,4 +7,8 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="background">#F3F7EC</color>
+    <color name="floatingButton">#06A012</color>
+    <color name="topBar">#135D66</color>#E3FEF7
+    <color name="cardColor">#E3FEF7</color>
 </resources>

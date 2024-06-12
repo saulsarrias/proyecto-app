@@ -3,6 +3,7 @@ package com.example.andamiosapp.components
 import android.content.Context
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -36,12 +37,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.andamiosapp.R
 
 import com.example.andamiosapp.models.TareaResponse
 import com.example.andamiosapp.viewmodels.ManagerViewModel
@@ -52,49 +55,35 @@ import com.example.andamiosapp.viewmodels.ManagerViewModel
 fun MainTopBarTarea(
     titulo: String,
     onSearchTextChanged: (String) -> Unit,
-    navController: NavController
 ){
     var searchText by remember { mutableStateOf("") }
 
     TopAppBar(
         title = {
-            Text(
-                text = titulo,
-                color = Color.White
-            )
+            Box(modifier = Modifier.fillMaxWidth()) {
+                TextField(
+                    value = searchText,
+                    onValueChange = {
+                        searchText = it
+                        onSearchTextChanged(it)
+                    },
+                    placeholder = { Text("Buscar Tarea") },
+                    trailingIcon = {
+                        IconButton(
+                            onClick = { searchText = "" }
+                        ) {
+                            Icon(Icons.Filled.Clear, contentDescription = "Borrar")
+                        }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(0.dp)
+                )
+            }
         },
         colors = TopAppBarDefaults.mediumTopAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primary
-        ),
-        actions = {
-            IconButton(
-                onClick = { navController.popBackStack() }
-            ) {
-                Icon(Icons.TwoTone.ArrowBack, contentDescription = "Volver", tint = Color.White)
-            }
-
-            IconButton(
-                onClick = {  }
-            ) {
-                Icon(Icons.Filled.Search, contentDescription = "Buscar", tint = Color.White)
-            }
-
-            TextField(
-                value = searchText,
-                onValueChange = {
-                    searchText = it
-                    onSearchTextChanged(it)
-                },
-                placeholder = { Text("Buscar Tarea") },
-                trailingIcon = {
-                    IconButton(
-                        onClick = { searchText = ""}
-                    ) {
-                        Icon(Icons.Filled.Clear, contentDescription = "Borrar")
-                    }
-                }
-            )
-        }
+            containerColor = colorResource(R.color.topBar)
+        )
     )
 }
 
@@ -113,7 +102,8 @@ fun CardTarea(
             .padding(8.dp)
             .clickable {  },
         shape = RoundedCornerShape(8.dp),
-        elevation = CardDefaults.cardElevation(4.dp)
+        elevation = CardDefaults.cardElevation(4.dp),
+        colors = CardDefaults.cardColors(colorResource(R.color.cardColor))
     ) {
         Column(
             modifier = Modifier
@@ -147,14 +137,16 @@ fun CardTarea(
                     text = "Precio: ${tarea.precio_por_hora}€",
                     style = TextStyle(
                         fontSize = 16.sp,
-                        color = MaterialTheme.colorScheme.primary
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Bold
                     )
                 )
                 Text(
                     text = "Total Horas: ${tarea.horas_trabajadas}",
                     style = TextStyle(
                         fontSize = 16.sp,
-                        color = MaterialTheme.colorScheme.primary
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Bold
                     )
                 )
             }

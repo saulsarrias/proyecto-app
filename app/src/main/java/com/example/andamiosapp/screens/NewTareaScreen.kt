@@ -40,7 +40,7 @@ fun NewTareaScreen(navController: NavController, viewModel: ManagerViewModel
     var personal_asignado by remember { mutableStateOf("") }
     val parte_trabajo_id = SharesPreferencesApplication.preferences.getData("idParte", "")
 
-    Surface(color = Color.White) {
+    Surface {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -99,7 +99,7 @@ fun NewTareaScreen(navController: NavController, viewModel: ManagerViewModel
 
             Button(
                 onClick = { viewModel.guardarTarea(context = context, viewModel, TareaRequest(parte_trabajo_id, descripcion, personal_asignado, precio_por_hora, horas_trabajadas ))
-                    navController.navigate(AppScreens.InventarioScreen.route) },
+                    navController.popBackStack() },
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             ) {
                 Text(text = "Guardar")

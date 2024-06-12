@@ -2,6 +2,7 @@ package com.example.andamiosapp.screens
 
 import android.annotation.SuppressLint
 import android.content.Context
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
@@ -17,7 +18,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.navigation.NavController
+import com.example.andamiosapp.R
 import com.example.andamiosapp.components.BottomBar
 import com.example.andamiosapp.components.CardMaterial
 import com.example.andamiosapp.components.FloatingButton
@@ -76,7 +79,7 @@ fun ViewContent(
 
 
     Column {
-        MainTopBar(titulo = "", onSearchTextChanged = { newText ->
+        MainTopBar(onSearchTextChanged = { newText ->
             searchText = newText
         })
 
